@@ -52,4 +52,4 @@ Thumbs.db
 .vagrant/
 test/.env
 test/.vagrant/
-test/nodes.yaml
+#test/nodes.yaml

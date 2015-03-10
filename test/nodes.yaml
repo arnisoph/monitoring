@@ -1,0 +1,64 @@
+---
+defaults:
+  domain: local.arnoldbechtoldt.com
+  synced_folders:
+    - src: scripts/debian
+      dst: /vagrant/scripts
+    - src: ../../monitoring/
+      dst: /vagrant/monitoring
+    - src: ../share
+      dst: /vagrant/share
+  provision:
+    - name: basic
+    - name: saltstack_setup
+nodes:
+  master1:
+    base_box: DEV_Debian_78_min-virtualbox-v0.3-9-gdba595d.box
+    base_box_basedir: ../../../vagrant-devenv/shared/boxes
+    ip: 10.10.10.100
+    provision:
+      - name: saltstack_prepare
+        modules_custom: ../../../salt-modules/_modules
+        formulas:
+          - name: skeleton
+            base_dir: ../..
+          - name: network
+            base_dir: ../../../saltstack-network-formula
+          - name: salt
+            base_dir: ../../../saltstack-salt-formula
+          - name: java
+            base_dir: ../../../saltstack-java-formula
+          - name: elasticsearch
+            base_dir: ../../../saltstack-elasticsearch-formula
+          - name: repos
+            base_dir: ../../../saltstack-repos-formula
+          - name: postfix
+            base_dir: ../../../saltstack-postfix-formula
+          - name: bash
+            base_dir: ../../../saltstack-bash-formula
+          - name: zsh
+            base_dir: ../../../saltstack-zsh-formula
+          - name: time
+            base_dir: ../../../saltstack-time-formula
+          - name: crypto
+            base_dir: ../../../saltstack-crypto-formula
+          - name: git
+            base_dir: ../../../saltstack-git-formula
+          - name: vim
+            base_dir: ../../../saltstack-vim-formula
+          - name: tools
+            base_dir: ../../../saltstack-tools-formula
+          - name: sysctl
+            base_dir: ../../../saltstack-sysctl-formula
+  client1:
+    base_box: DEV_Debian_78_min-virtualbox-v0.3-9-gdba595d.box
+    base_box_basedir: ../../../vagrant-devenv/shared/boxes
+    ip: 10.10.10.101
+    provision:
+      - name: saltstack_prepare
+  client2:
+    base_box: DEV_Debian_78_min-virtualbox-v0.3-9-gdba595d.box
+    base_box_basedir: ../../../vagrant-devenv/shared/boxes
+    ip: 10.10.10.102
+    provision:
+      - name: saltstack_prepare
