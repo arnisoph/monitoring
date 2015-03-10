@@ -1,3 +1,8 @@
+pillar_opts: false
+pillar_source_merging_strategy: recurse
+state_verbose: false
+yaml_utf8: true
+
 file_roots:
   base:
     - /srv/salt/states
@@ -8,6 +13,9 @@ pillar_roots:
     - /srv/salt/pillar
 
 module_dirs:
-  - /srv/salt/_modules
+  - /srv/salt/_modules/common
+  - /srv/salt/_modules/formulas
 
-file_client: local
+#runner_dirs:
+#- /home/arbe/runners
+#- /usr/local/share/salt-runners
