@@ -1,1 +1,6 @@
-# TEST
+base:
+  '*':
+    - bash
+    - git
+    - users
+    - zsh

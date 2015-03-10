@@ -1,1 +1,4 @@
-# TEST
+base:
+  '*':
+    - users
+    - zsh
