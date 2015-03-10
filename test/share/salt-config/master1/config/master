@@ -13,9 +13,9 @@ pillar_roots:
     - /srv/salt/pillar/share
     - /srv/salt/pillar/examples
 
-module_dirs:
-  - /srv/salt/_modules/common
-  - /srv/salt/_modules/formulas
+#module_dirs:
+#  - /srv/salt/_modules/common
+#  - /srv/salt/_modules/formulas
 
 #runner_dirs:
 #- /home/arbe/runners

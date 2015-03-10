@@ -1,4 +1,5 @@
 base:
   '*':
+    - bash
     - users
     - zsh

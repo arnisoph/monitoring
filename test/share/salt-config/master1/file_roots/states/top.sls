@@ -1,6 +1,14 @@
 base:
   '*':
-    - bash
+    - repos
+    #- bash
+    - crypto
     - git
+    #- postfix
+    #- salt.master
+    #- salt.minion
+    - sysctl
+    #- time.ntpd
     - users
+    - vim
     - zsh
