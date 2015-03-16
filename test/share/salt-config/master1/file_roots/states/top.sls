@@ -12,3 +12,7 @@ base:
     - users
     - vim
     - zsh
+  'master1.*':
+    - sysctl
+    - java
+    - elasticsearch
