@@ -1,3 +1,4 @@
+log_level: debug
 master: 10.10.10.100
 module_dirs:
   - /srv/salt/_modules/common

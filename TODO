@@ -1,0 +1,11 @@
+TODO:
+
+pip install elasticsearch
+
+ln -s /vagrant/src/monitoring/salt/elasticsearcharbe_return.py /srv/salt/states/_returners/elasticsearcharbe_return.py
+#cp /vagrant/src/monitoring/salt/elasticsearcharbe_return.py /srv/salt/states/_returners/
+salt '*' saltutil.sync_all
+
+create misc repo for file_roots for ^
+
+

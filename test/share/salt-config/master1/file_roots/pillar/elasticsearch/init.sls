@@ -1,7 +1,15 @@
+repos:
+  lookup:
+    repos:
+      elasticsearch:
+        url: http://packages.elasticsearch.org/elasticsearch/1.4/debian
+        dist: stable
+        comps:
+          - main
+        keyurl: http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+
 elasticsearch:
   lookup:
-    repo:
-      keyurl: salt://elasticsearch/files/GPG-KEY-elasticsearch
     defaults:
       JAVA_HOME: /opt/java/jdk/current/src
       ES_HEAP_SIZE: 512m
@@ -32,13 +40,15 @@ elasticsearch:
 #        url: 'https://github.com/karmi/elasticsearch-paramedic'
 
 java:
-  jdk:
-    current_ver: 8u20
-    versions:
-      8u20:
-        source: http://fipmb1012.mgmt.systems/share/java/jdk-8u20-linux-x64.tar.gz
-        source_hash: md5=ec7f89dc3697b402e2c851d0488f6299
-        version: jdk1.8.0_20
+  lookup:
+    manage:
+      jdk:
+        current_ver: 8u20
+        versions:
+          8u20:
+            source: file:///vagrant/share/misc/jdk-8u20-linux-x64.tar.gz
+            source_hash: md5=ec7f89dc3697b402e2c851d0488f6299
+            version: jdk1.8.0_20
 
 sysctl:
   params:

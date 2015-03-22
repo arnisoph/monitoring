@@ -6,9 +6,10 @@ base:
     - git
     #- postfix
     #- salt.master
-    #- salt.minion
+    - salt.minion
     - sysctl
     #- time.ntpd
+    - tools
     - users
     - vim
     - zsh
