@@ -9,3 +9,7 @@ salt '*' saltutil.sync_all
 create misc repo for file_roots for ^
 
 
+links:
+* http://graphite.readthedocs.org/en/latest/tools.html
+* https://github.com/scobal/seyren
+* http://www.netways.de/fileadmin/events/OSMC2014/Slides_2014/Time_to_say_goodbye_to_your_nagios_setup_-_Oliver_Jan.pdf
