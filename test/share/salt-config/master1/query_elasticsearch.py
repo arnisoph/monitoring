@@ -14,7 +14,7 @@ body = {
             "filtered": {
                 "query": {
                     "match": {
-                        "_type": "test.ping"
+                        "_type": "ssh.host_keys"
                         }
                     },
                 "filter" : {
@@ -26,7 +26,7 @@ body = {
             }
 }
 
-res = es.search(index='salt', doc_type='test.ping', body=body)
+res = es.search(index='salt', body=body)
 
 for hit in res['hits']['hits']:
     print(json.dumps(hit, sort_keys=True, indent=4, separators=(',', ': ')))
