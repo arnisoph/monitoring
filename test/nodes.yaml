@@ -29,6 +29,8 @@ nodes:
             base_dir: ../../../saltstack-java-formula
           - name: kibana
             base_dir: ../../../saltstack-kibana-formula
+          - name: logstash
+            base_dir: ../../../saltstack-logstash-formula
           - name: elasticsearch
             base_dir: ../../../saltstack-elasticsearch-formula
           - name: repos

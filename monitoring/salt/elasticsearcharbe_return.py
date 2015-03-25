@@ -52,23 +52,25 @@ from __future__ import absolute_import
 
 # Import Python libs
 import datetime
+import logging
+import json
 
 # Import Salt libs
 #import salt.utils.jid
 
 __virtualname__ = 'elasticsearcharbe'
 
+log = logging.getLogger(__name__)
+
+# Import third party libs
 try:
     import elasticsearch
+    logging.getLogger('elasticsearch').setLevel(logging.CRITICAL)
     HAS_ELASTICSEARCH = True
 except ImportError:
     HAS_ELASTICSEARCH = False
-import json
-#try:
-#    from jsonpickle.pickler import Pickler
-#    HAS_PICKLER = True
-#except ImportError:
-#    HAS_PICKLER = False
+
+from salt.ext.six import string_types
 
 
 def _create_index(client, index, fun):
@@ -79,8 +81,8 @@ def _create_index(client, index, fun):
         index=index,
         body={
             'settings': {
-                'number_of_shards': __salt__['config.get']('elasticsearch:number_of_shards') or 1,
-                'number_of_replicas': __salt__['config.get']('elasticsearch:number_of_replicas') or 0,
+                'number_of_shards': __salt__['config.get']('elasticsearch:number_of_shards', 1),
+                'number_of_replicas': __salt__['config.get']('elasticsearch:number_of_replicas', 0),
             },
             'mappings': {
                 fun: {
@@ -120,28 +122,56 @@ def __virtual__():
     return False
 
 
-def _get_pickler():
-    '''
-    Return a picker instance
-    '''
-    return Pickler(max_depth=5)
-
-
 def _get_instance():
     '''
     Return the elasticsearch instance
     '''
-    # Check whether we have a single elasticsearch host string, or a list of host strings.
+
+    # Check whether we have a single elasticsearch host string, or a list of host strings
     if isinstance(__salt__['config.get']('elasticsearch:host'), list):
-        return elasticsearch.Elasticsearch(__salt__['config.get']('elasticsearch:host'))
+        hosts = __salt__['config.get']('elasticsearch:host')
     else:
-        return elasticsearch.Elasticsearch([__salt__['config.get']('elasticsearch:host')])
+        hosts = [__salt__['config.get']('elasticsearch:host', 'http://127.0.0.1:9200')]
+
+    return elasticsearch.Elasticsearch(hosts=hosts)
 
 
 def returner(ret):
     '''
     Process the return from Salt
     '''
+    index = 'lalilu'
+
+    es = _get_instance()
+    index_exists = __salt__['elasticsearcharbe.index_exists'](index)
+
+    if not index_exists:
+        log.warn('Won\'t push new data to Elasticsearch, index \'{0}\' does\'t exist! You need to create it yourself!'.format(index))
+        return
+
+#    data = {
+#        '@timestamp': datetime.datetime.now().isoformat(),
+#        'success': ret['success'],
+#        'id': ret['id'],
+#        'fun': ret['fun'],
+#        'jid': ret['jid'],
+#        'return': ret['return']
+#        }
+#
+#    if 'fun_args' in ret:
+#        data['fun_args'] = ret['fun_args']
+#
+#    if 'retcode' in ret:
+#        data['retcode'] = ret['retcode']
+#
+#    if 'test' in ret:
+#        data['test'] = ret['test']
+#
+#    _create_index(es, 'salt', data['fun'])
+#    es.index(index='salt',
+#             doc_type=data['fun'],
+#             body=json.dumps(data),
+#    )
 
 #    accepted_functions = [ #TODO this will be list of user-defined checks!
 #        'disk',
@@ -165,31 +195,6 @@ def returner(ret):
 #    #    return
 #
 #
-
-    data = {
-        '@timestamp': datetime.datetime.now().isoformat(),
-        'success': ret['success'],
-        'id': ret['id'],
-        'fun': ret['fun'],
-        'jid': ret['jid'],
-        'return': ret['return']
-        }
-
-    if 'fun_args' in ret:
-        data['fun_args'] = ret['fun_args']
-
-    if 'retcode' in ret:
-        data['retcode'] = ret['retcode']
-
-    if 'test' in ret:
-        data['test'] = ret['test']
-
-    es = _get_instance()
-    _create_index(es, 'salt', data['fun'])
-    es.index(index='salt',
-             doc_type=data['fun'],
-             body=json.dumps(data),
-    )
 
 #todo implemetn get_jid and others
 

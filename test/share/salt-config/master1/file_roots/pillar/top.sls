@@ -6,3 +6,4 @@ base:
     - common
   'master1.*':
     - elasticsearch
+    - logstash

@@ -17,3 +17,4 @@ base:
     - sysctl
     - java
     - elasticsearch
+    - logstash
