@@ -2,22 +2,25 @@
 defaults:
   domain: mon.local.arnoldbechtoldt.com
   osfam: debian
-  base_box: DEV_Debian_78_salt_arbe_git-virtualbox-v0.4-9-gb812291.box
+  base_box: DEV_Debian_78_salt_arbe_git-virtualbox-CURRENT.box
   base_box_basedir: ../../../vagrant-devenv/shared/boxes
   synced_folders:
-    - src: assets/scripts/provision/
+    - src: assets/scripts/provision
       dst: /vagrant/scripts
-    - src: ../../monitoring/
-      dst: /vagrant/src/monitoring
+    - src: ../../../salt-modules/_modules
+      dst: /vagrant/salt/_modules
+    - src: ../../../salt-modules/_states
+      dst: /vagrant/salt/_states
     - src: ../share
       dst: /vagrant/share
+    - src: ../../monitoring
+      dst: /vagrant/src/monitoring
 nodes:
   master1:
     ip: 10.10.10.100
     provision:
       - name: basic
       - name: saltstack_formulas
-        modules_custom: ../../../salt-modules/_modules
         formulas:
           - name: skeleton
             base_dir: ../..
@@ -62,7 +65,6 @@ nodes:
     provision:
       - name: basic
       - name: saltstack_formulas
-        modules_custom: ../../../salt-modules/_modules
       - name: saltstack_config
       - name: saltstack_services
   client2:
@@ -70,6 +72,5 @@ nodes:
     provision:
       - name: basic
       - name: saltstack_formulas
-        modules_custom: ../../../salt-modules/_modules
       - name: saltstack_config
       - name: saltstack_services

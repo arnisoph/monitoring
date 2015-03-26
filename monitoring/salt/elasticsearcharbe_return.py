@@ -149,14 +149,14 @@ def returner(ret):
         log.warn('Won\'t push new data to Elasticsearch, index \'{0}\' does\'t exist! You need to create it yourself!'.format(index))
         return
 
-#    data = {
-#        '@timestamp': datetime.datetime.now().isoformat(),
-#        'success': ret['success'],
-#        'id': ret['id'],
-#        'fun': ret['fun'],
-#        'jid': ret['jid'],
-#        'return': ret['return']
-#        }
+    data = {
+        '@timestamp': datetime.datetime.now().isoformat(),
+        'success': ret['success'],
+        'id': ret['id'],
+        'fun': ret['fun'],
+        'jid': ret['jid'],
+        'return': ret['return']
+        }
 #
 #    if 'fun_args' in ret:
 #        data['fun_args'] = ret['fun_args']
@@ -168,10 +168,10 @@ def returner(ret):
 #        data['test'] = ret['test']
 #
 #    _create_index(es, 'salt', data['fun'])
-#    es.index(index='salt',
-#             doc_type=data['fun'],
-#             body=json.dumps(data),
-#    )
+    es.index(index=index,
+             doc_type=data['fun'],
+             body=json.dumps(data),
+    )
 
 #    accepted_functions = [ #TODO this will be list of user-defined checks!
 #        'disk',

@@ -22,8 +22,6 @@ elasticsearch:
         data: true
       index:
         number_of_replicas: 0
-      network:
-        host: 0.0.0.0
       gateway:
         expected_nodes: 1
       discovery:
@@ -38,6 +36,8 @@ elasticsearch:
       - name: karmi/elasticsearch-paramedic
         installed_name: paramedic
 #        url: 'https://github.com/karmi/elasticsearch-paramedic'
+    indices:
+      lalilu: {}
 
 java:
   lookup:
