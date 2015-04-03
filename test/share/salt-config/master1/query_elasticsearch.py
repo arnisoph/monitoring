@@ -9,22 +9,22 @@ from pprint import pprint
 
 es = elasticsearch.Elasticsearch(['10.10.10.100:9200'])
 
-body = {
-        "query": {
-            "filtered": {
-                "query": {
-                    "match": {
-                        "_type": "pkg.install"
-                        }
-                    },
-                "filter" : {
-                    "term": {
-                        "id": "master1.mon.local.arnoldbechtoldt.com"
-                        }
-                    }
-                }
-            }
-}
+#body = {
+#        "query": {
+#            "filtered": {
+#                "query": {
+#                    "match": {
+#                        "fun": "test.ping"
+#                        }
+#                    },
+#                "filter" : {
+#                    "term": {
+#                        "minion": "master1.mon.local.arnoldbechtoldt.com"
+#                        }
+#                    }
+#                }
+#            }
+#}
 
 body = {
     "query": {
@@ -33,7 +33,7 @@ body = {
     }
 
 
-res = es.search(index='salt-test_ping', body=body)
+res = es.search(index='salt-disk_percentage', body=body)
 
 for hit in res['hits']['hits']:
     print(json.dumps(hit, sort_keys=True, indent=4, separators=(',', ': ')))

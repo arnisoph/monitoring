@@ -9,6 +9,7 @@ salt:
       config:
         master:
           config:
+            ext_job_cache: elasticsearcharbe
             autosign_file: /etc/salt/autosign.conf
             pillar_opts: false
             pillar_source_merging_strategy: recurse

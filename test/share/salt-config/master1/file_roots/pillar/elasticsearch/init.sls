@@ -1,3 +1,6 @@
+include:
+  - elasticsearch.index_templates
+
 repos:
   lookup:
     repos:
@@ -36,8 +39,9 @@ elasticsearch:
       - name: karmi/elasticsearch-paramedic
         installed_name: paramedic
 #        url: 'https://github.com/karmi/elasticsearch-paramedic'
-    indices:
-      lalilu: {}
+#    indices:
+#      lalilu: {}
+
 
 java:
   lookup:
@@ -51,8 +55,9 @@ java:
             version: jdk1.8.0_20
 
 sysctl:
-  params:
-    - name: vm.swappiness
-      value: 0
-    - name: vm.max_map_count
-      value: 262144
+  lookup:
+    params:
+      - name: vm.swappiness
+        value: 1
+      - name: vm.max_map_count
+        value: 262144
