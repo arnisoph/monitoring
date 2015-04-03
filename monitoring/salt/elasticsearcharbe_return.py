@@ -77,43 +77,29 @@ def _create_index(client, index, fun):
     '''
     Create empty index
     '''
-    client.indices.create(
-        index=index,
-        body={
-            'settings': {
-                'number_of_shards': __salt__['config.get']('elasticsearch:number_of_shards', 1),
-                'number_of_replicas': __salt__['config.get']('elasticsearch:number_of_replicas', 0),
-            },
-            'mappings': {
-                fun: {
-                    'properties': {
-                        '@timestamp': {
-                            'type': 'date'
-                        },
-                        'success': {
-                            'type': 'boolean'
-                        },
-                        'id': {
-                            'type': 'string',
-                            "index" : "not_analyzed"
-                        },
-                        'retcode': {
-                            'type': 'integer'
-                        },
-                        'fun': {
-                            'type': 'string',
-                            "index" : "not_analyzed"
-                        },
-                        'jid': {
-                            'type': 'string',
-                            "index" : "not_analyzed"
-                        }
-                    }
-                }
-            }
-        },
-        ignore=400
-    )
+    client.indices.create(index=index,
+                          body={
+                              'settings': {
+                                  'number_of_shards': __salt__['config.get']('elasticsearch:number_of_shards', 1),
+                                  'number_of_replicas': __salt__['config.get']('elasticsearch:number_of_replicas', 0),
+                              },
+                              'mappings': {
+                                  fun: {
+                                      'properties': {
+                                          '@timestamp': {'type': 'date'},
+                                          'success': {'type': 'boolean'},
+                                          'id': {'type': 'string',
+                                                 "index": "not_analyzed"},
+                                          'retcode': {'type': 'integer'},
+                                          'fun': {'type': 'string',
+                                                  "index": "not_analyzed"},
+                                          'jid': {'type': 'string',
+                                                  "index": "not_analyzed"}
+                                      }
+                                  }
+                              }
+                          },
+                          ignore=400)
 
 
 def __virtual__():
@@ -140,70 +126,40 @@ def returner(ret):
     '''
     Process the return from Salt
     '''
-    index = 'lalilu'
+    job_fun = ret['fun']
+    job_fun_escaped = job_fun.replace('.', '_')
+    job_id = ret['jid']
+    job_minion_id = ret['id']
+    job_success = True if ret['return'] else False
+    index = 'salt-{0}'.format(job_fun_escaped)
+
+    # Determine doc type, set a hardcoded default at the moment # TODO
+    doc_type = datetime.date.today().strftime('%Y%m%d%H%M%S%f')
+
+    if not job_success:
+        log.debug('Won\'t push new data to Elasticsearch, job with jid {0} failed'.format(job_id))
+        return
 
     es = _get_instance()
     index_exists = __salt__['elasticsearcharbe.index_exists'](index)
 
     if not index_exists:
-        log.warn('Won\'t push new data to Elasticsearch, index \'{0}\' does\'t exist! You need to create it yourself!'.format(index))
-        return
+        __salt__['elasticsearcharbe.index_create']('{0}-v1'.format(index))
+        __salt__['elasticsearcharbe.alias_create']('{0}-v1'.format(index), index)
+        #log.warn('Won\'t push new data to Elasticsearch, index \'{0}\' does\'t exist! You need to create it yourself!'.format(index))
+        #return
 
     data = {
         '@timestamp': datetime.datetime.now().isoformat(),
-        'success': ret['success'],
-        'id': ret['id'],
-        'fun': ret['fun'],
-        'jid': ret['jid'],
-        'return': ret['return']
-        }
-#
-#    if 'fun_args' in ret:
-#        data['fun_args'] = ret['fun_args']
-#
-#    if 'retcode' in ret:
-#        data['retcode'] = ret['retcode']
-#
-#    if 'test' in ret:
-#        data['test'] = ret['test']
-#
-#    _create_index(es, 'salt', data['fun'])
-    es.index(index=index,
-             doc_type=data['fun'],
-             body=json.dumps(data),
-    )
+        'result': job_success,
+        'minion': job_minion_id,
+        'fun': job_fun,
+        'jid': job_id,
+        'return': ret['return'],
+    }
+    body = json.dumps(data)
 
-#    accepted_functions = [ #TODO this will be list of user-defined checks!
-#        'disk',
-#        'pkg.list_upgrades',
-#        'pkg.install',
-#    ]
-#
-#    fun_pos = ret['fun'].rfind('.')
-#    modname = ''
-#
-#    if fun_pos != -1:
-#        modname = ret['fun'][:fun_pos]
-#
-#    if (modname not in accepted_functions) and (ret['fun'] not in accepted_functions):
-#        return
-#
-#    if (ret['success'] == False):
-#        return
-#
-#    #if (isinstance(ret['fun_args'], dict) == False): #TODO
-#    #    return
-#
-#
-
-#todo implemetn get_jid and others
-
-    #the_time = datetime.datetime.utcnow().isoformat()
-    #ret['@timestamp'] = the_time
-    #es_.index(index=__salt__['config.get']('elasticsearch:index'),
-    #         doc_type='returner',
-    #         body=_get_pickler().flatten(ret),
-    #         )
+    ret = __salt__['elasticsearcharbe.document_create'](index, doc_type, body)
 
 
 #def prep_jid(nocache, passed_jid=None):  # pylint: disable=unused-argument

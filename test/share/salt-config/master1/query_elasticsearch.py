@@ -14,19 +14,26 @@ body = {
             "filtered": {
                 "query": {
                     "match": {
-                        "_type": "ssh.host_keys"
+                        "_type": "pkg.install"
                         }
                     },
                 "filter" : {
                     "term": {
-                        "id": "client1.mon.local.arnoldbechtoldt.com"
+                        "id": "master1.mon.local.arnoldbechtoldt.com"
                         }
                     }
                 }
             }
 }
 
-res = es.search(index='salt', body=body)
+body = {
+    "query": {
+        "match_all": {}
+        }
+    }
+
+
+res = es.search(index='salt-test_ping', body=body)
 
 for hit in res['hits']['hits']:
     print(json.dumps(hit, sort_keys=True, indent=4, separators=(',', ': ')))
