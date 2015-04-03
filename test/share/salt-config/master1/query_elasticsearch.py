@@ -33,7 +33,7 @@ body = {
     }
 
 
-res = es.search(index='salt-disk_percentage', body=body)
+res = es.search(index='salt-status_diskstats', body=body)
 
 for hit in res['hits']['hits']:
     print(json.dumps(hit, sort_keys=True, indent=4, separators=(',', ': ')))

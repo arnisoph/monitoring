@@ -1,10 +1,11 @@
 elasticsearch:
   lookup:
     index_templates:
-      salt-test_ping:
+      salt_defaults:
         #ensure: absent
         config:
-          template: salt-test_ping-*
+          template: salt-*
+          order: 10
           settings:
             number_of_shards: 1
           mappings:
@@ -27,7 +28,13 @@ elasticsearch:
                 jid:
                   type: string
                   index: not_analyzed
+      salt-test_ping:
+        #ensure: absent
+        config:
+          template: salt-test_ping-*
+          order: 100
+          mappings:
+            2014_7_a:
+              properties:
                 return:
                   type: boolean
-          aliases:
-            salt-test_ping: {}

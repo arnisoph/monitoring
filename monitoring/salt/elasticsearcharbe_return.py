@@ -91,13 +91,22 @@ def returner(ret):
     job_id = ret['jid']
     job_minion_id = ret['id']
     job_success = True if ret['return'] else False
-    job_retcode = ret['retcode']
+    job_retcode = ret.get('retcode', 1)
     index = 'salt-{0}'.format(job_fun_escaped)
     #index = 'salt-{0}-{1}'.format(job_fun_escaped, datetime.date.today().strftime('%Y.%m.%d'))
+
+    functions_blacklist = ['saltutil.find_job', 'pillar_items', 'grains_items']
+    functions_whitelist = ['test.ping']  # TODO
 
     # Determine doc type, set a hardcoded default at the moment # TODO
     #doc_type = datetime.date.today().strftime('%Y%m%d%H%M%S%f')
     doc_type_version = '2014_7_a'  # TODO config option
+
+    if job_fun in functions_blacklist and job_fun not in functions_whitelist:  #TODO configurable
+        log.debug(
+            'Won\'t push new data to Elasticsearch, job with jid {0} used function {1} which is in the user-defined list of ignored functions'.format(
+                job_id, job_fun))
+        return
 
     if not job_success or job_retcode != 0:
         log.debug('Won\'t push new data to Elasticsearch, job with jid {0} was not succesful'.format(job_id))
