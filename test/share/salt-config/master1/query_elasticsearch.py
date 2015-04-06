@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
+"""
 foo
-'''
+"""
 
-import elasticsearch
+from elasticsearch import Elasticsearch
 import json
 from pprint import pprint
-from datetime import datetime
-import datetime
+from datetime import datetime, timedelta, tzinfo
 
-es = elasticsearch.Elasticsearch(['10.10.10.100:9200'])
+es = Elasticsearch(['10.10.10.100:9200'])
 
 #body = {
 #        "query": {
@@ -31,25 +30,10 @@ es = elasticsearch.Elasticsearch(['10.10.10.100:9200'])
 
 body = {"query": {"match_all": {}}}
 
-d = datetime.datetime.utcnow()
-epoch = datetime.datetime(1970, 1, 1)
-time_current = (d - epoch).total_seconds()
-
-#time_gte = int(time_current - (60 * 10))
-#time_lte = time_gte + 360
-#print time_gte
-
-time_gte = "2015-04-06T08:15:00"
-
-utcnow = datetime.datetime.utcnow()
-td = datetime.timedelta(minutes=10)
+utcnow = datetime.utcnow()
+td = timedelta(minutes=10)
 time_gte = (utcnow - td).isoformat()
 time_lte = "now"
-
-print time_gte
-
-#time_from = "2015-04-05T19:50:00+02:00"
-#time_to = "now"
 
 body = {
     "query": {

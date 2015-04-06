@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 Return data to an elasticsearch server for indexing.
 
 :maintainer:    Jurnell Cockhren <jurnell.cockhren@sophicware.com>, Arnold Bechtoldt <mail@arnoldbechtoldt.com>
@@ -51,7 +51,7 @@ In order to have the returner apply to all minions:
 # TODO: add notice: users need to manage index templates WITH mappings themselve
 # TODO: do we want custom meta data?
 # TODO UTC notice
-'''
+"""
 from __future__ import absolute_import
 
 # Import Python libs
@@ -84,9 +84,9 @@ def __virtual__():
 
 
 def returner(ret):
-    '''
+    """
     Process the return from Salt
-    '''
+    """
     job_fun = ret['fun']
     job_fun_escaped = job_fun.replace('.', '_')
     job_id = ret['jid']
@@ -151,8 +151,8 @@ def returner(ret):
 
 #def prep_jid(nocache, passed_jid=None):  # pylint: disable=unused-argument
 def prep_jid(nocache):  # pylint: disable=unused-argument
-    '''
+    """
     Do any work necessary to prepare a JID, including sending a custom id
-    '''
+    """
     #return passed_jid if passed_jid is not None else salt.utils.jid.gen_jid()
     return salt.utils.gen_jid()
