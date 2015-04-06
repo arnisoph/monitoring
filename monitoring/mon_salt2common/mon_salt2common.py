@@ -4,6 +4,8 @@
 
 A daemon that translates Salt specific index mappings into a common
 (*place monitoring tool name here*) (FIXME) mappings.
+
+Execute with /vagrant/src/monitoring/mon_salt2common/mon_salt2common.py
 """
 # TODO add logger
 # TODO add config parser
