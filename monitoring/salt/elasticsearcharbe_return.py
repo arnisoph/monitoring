@@ -1,4 +1,4 @@
-#! -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 '''
 Return data to an elasticsearch server for indexing.
 
@@ -50,11 +50,12 @@ In order to have the returner apply to all minions:
 
 # TODO: add notice: users need to manage index templates WITH mappings themselve
 # TODO: do we want custom meta data?
+# TODO UTC notice
 '''
 from __future__ import absolute_import
 
 # Import Python libs
-import datetime
+from datetime import tzinfo, datetime, timedelta
 import logging
 import json
 
@@ -93,7 +94,7 @@ def returner(ret):
     job_success = True if ret['return'] else False
     job_retcode = ret.get('retcode', 1)
     index = 'salt-{0}'.format(job_fun_escaped)
-    #index = 'salt-{0}-{1}'.format(job_fun_escaped, datetime.date.today().strftime('%Y.%m.%d'))
+    #index = 'salt-{0}-{1}'.format(job_fun_escaped, datetime.date.today().strftime('%Y.%m.%d')) #TODO prefer this? #TODO make it configurable!
 
     functions_blacklist = ['saltutil.find_job', 'pillar_items', 'grains_items']
     functions_whitelist = ['test.ping']  # TODO
@@ -104,12 +105,12 @@ def returner(ret):
 
     if job_fun in functions_blacklist and job_fun not in functions_whitelist:  #TODO configurable
         log.debug(
-            'Won\'t push new data to Elasticsearch, job with jid {0} used function {1} which is in the user-defined list of ignored functions'.format(
+            'Won\'t push new data to Elasticsearch, job with jid={0} and function={1} which is in the user-defined list of ignored functions'.format(
                 job_id, job_fun))
         return
 
-    if not job_success or job_retcode != 0:
-        log.debug('Won\'t push new data to Elasticsearch, job with jid {0} was not succesful'.format(job_id))
+    if not job_success:  # TODO actually, what is retcode? or job_retcode != 0:
+        log.debug('Won\'t push new data to Elasticsearch, job with jid={0}, job_retcode={1} was not succesful'.format(job_id, job_retcode))
         return
 
     index_exists = __salt__['elasticsearcharbe.index_exists'](index)
@@ -122,14 +123,26 @@ def returner(ret):
         #log.warn('Won\'t push new data to Elasticsearch, index \'{0}\' does\'t exist! You need to create it yourself!'.format(index))
         #return
 
+    class UTC(tzinfo):
+        def utcoffset(self, dt):
+            return timedelta(0)
+
+        def tzname(self, dt):
+            return 'UTC'
+
+        def dst(self, dt):
+            return timedelta(0)
+
+    utc = UTC()
+
     data = {
-        '@timestamp': datetime.datetime.now().isoformat(),
+        '@timestamp': datetime.now(utc).isoformat(),
         'success': job_success,
         'retcode': job_retcode,
-        'minion': job_minion_id,
+        'minion': job_minion_id,  #TODO minion_id
         'fun': job_fun,
         'jid': job_id,
-        'return': ret['return'],
+        'data': ret['return'],
     }
     body = json.dumps(data)
 
