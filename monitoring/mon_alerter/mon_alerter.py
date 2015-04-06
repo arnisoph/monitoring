@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, tzinfo
 
 es = Elasticsearch(['10.10.10.100:9200'])
 
+
 class UTC(tzinfo):
     def utcoffset(self, dt):
         return timedelta(0)
@@ -54,7 +55,6 @@ body = {
     "size": 30,
     "sort": {"@timestamp": "asc"}
 }
-
 
 res = es.search(index='monitoring-sysloadavg-*', body=body)
 
